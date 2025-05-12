@@ -1,0 +1,42 @@
+services:
+  backend:
+    container_name: nest-backend-new
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "5000:5000"
+      - "9229:9229"
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    restart: always
+  frontend:
+    container_name: react-frontend
+    build:
+      context: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: always
+
+  postgres:
+    container_name: postgres-db-new
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: psdSH_nik
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
